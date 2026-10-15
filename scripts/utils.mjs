@@ -24,16 +24,33 @@ export function setupTheme() {
 
   const button = document.querySelector("#theme-toggle");
 
-  if (!button) return;
+  if (!button) {
+    return;
+  }
 
-  button.textContent = savedTheme === "dark" ? "Light Mode" : "Dark Mode";
+  if (savedTheme === "dark") {
+    button.textContent = "Light Mode";
+  } else {
+    button.textContent = "Dark Mode";
+  }
 
-  button.addEventListener("click", () => {
+  button.addEventListener("click", function () {
     const currentTheme = document.documentElement.dataset.theme;
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
+    let newTheme;
+
+    if (currentTheme === "dark") {
+      newTheme = "light";
+    } else {
+      newTheme = "dark";
+    }
 
     document.documentElement.dataset.theme = newTheme;
     localStorage.setItem("ai-theme", newTheme);
-    button.textContent = newTheme === "dark" ? "Light Mode" : "Dark Mode";
+
+    if (newTheme === "dark") {
+      button.textContent = "Light Mode";
+    } else {
+      button.textContent = "Dark Mode";
+    }
   });
 }

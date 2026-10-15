@@ -1,12 +1,12 @@
 const JOBS_API_URL = "https://artificialintelligencejobs.co/api/jobs"; // O la API de AI Jobs asignada
-const EMOJI_API_URL = "https://emojihub.yurace.pro/api/all"; 
+const EMOJI_API_URL = "https://emojihub.yurace.pro/api/random"; 
 
 /**
  * Obtiene los emojis desde EmojiHub
  */
 export async function fetchEmoji() {
   try {
-    const response = await fetch("https://emojihub.yurace.pro/api/random");
+    const response = await fetch(EMOJI_API_URL);
     if (!response.ok) throw new Error("Error fetching emoji");
     const data = await response.json();
     // Unimos los códigos HTML del arreglo de htmlCode
@@ -21,7 +21,7 @@ export async function fetchEmoji() {
  
 export async function fetchJobs() {
   try {
-    const response = await fetch("https://artificialintelligencejobs.co/api/jobs"); 
+    const response = await fetch(JOBS_API_URL); 
     if (!response.ok) throw new Error("Failed to fetch jobs data");
     
     const data = await response.json();

@@ -45,25 +45,32 @@ export class JobList {
     }
 
     this.container.innerHTML = this.filteredJobs.map(job => {
-      const isFav = this.favorites.some(f => f.id === job.id || f.title === job.title);
+      // Validaciones de datos faltantes para prevenir fallos visuales
+      const jobId = job.id || job.title || "unknown-id";
+      const jobTitle = job.title || "Untitled Position";
+      const jobCompany = job.company || "Confidential Company";
+      const jobLevel = job.level || "Mid";
+      const jobApplyUrl = job.apply_url || job.url || "#";
+      
+      const isFav = this.favorites.some(f => (f.id || f.title) === jobId);
       
       return `
         <article class="job-card">
           <div class="job-card-header">
-            <span class="job-emoji">${job.emoji}</span>
-            <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${job.id || job.title}">
+            <span class="job-emoji">${job.emoji || '🤖'}</span>
+            <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${jobId}">
               ${isFav ? '❤️' : '🤍'}
             </button>
           </div>
-          <h3>${job.title}</h3>
-          <p class="company"><strong>${job.company}</strong></p>
+          <h3>${jobTitle}</h3>
+          <p class="company"><strong>${jobCompany}</strong></p>
           <div class="tags">
-            <span class="tag">${job.level || 'Mid'}</span>
+            <span class="tag">${jobLevel}</span>
             <span class="tag">${job.remote ? 'Remote' : 'On-site'}</span>
           </div>
           <div class="job-card-footer">
-            <button class="button secondary-button view-details-btn" data-id="${job.title}">View Details</button>
-            <a href="${job.apply_url || '#'}" target="_blank" class="button primary-button">Apply Now</a>
+            <button class="button secondary-button view-details-btn" data-id="${jobTitle}">View Details</button>
+            <a href="${jobApplyUrl}" target="_blank" class="button primary-button">Apply Now</a>
           </div>
         </article>
       `;
@@ -114,8 +121,11 @@ export class JobList {
     const selectedRemote = this.remoteFilter.value;
 
     this.filteredJobs = this.allJobs.filter(job => {
-      const matchesSearch = job.title.toLowerCase().includes(searchTerm) || 
-                            job.company.toLowerCase().includes(searchTerm);
+      const title = job.title || "";
+      const company = job.company || "";
+      
+      const matchesSearch = title.toLowerCase().includes(searchTerm) || 
+                            company.toLowerCase().includes(searchTerm);
       
       const matchesLevel = selectedLevel === "all" || job.level === selectedLevel;
       
@@ -148,19 +158,26 @@ export class JobList {
     const job = this.allJobs.find(j => j.title === title);
     if (!job) return;
 
+    // Validaciones seguras para el Modal
+    const jobTitle = job.title || "Untitled Position";
+    const jobCompany = job.company || "Confidential Company";
+    const jobLocation = job.location || "Location Not Specified";
+    const jobLevel = job.level || "N/A";
+    const jobApplyUrl = job.apply_url || job.url || "#";
+
     this.modalBody.innerHTML = `
       <div class="modal-header">
-        <span class="modal-emoji">${job.emoji}</span>
-        <h2>${job.title}</h2>
-        <p class="company">${job.company} - ${job.location || 'Location Not Specified'}</p>
+        <span class="modal-emoji">${job.emoji || '🤖'}</span>
+        <h2>${jobTitle}</h2>
+        <p class="company">${jobCompany} - ${jobLocation}</p>
       </div>
       <hr>
       <div class="modal-details">
-        <p><strong>Experience Level:</strong> ${job.level || 'N/A'}</p>
+        <p><strong>Experience Level:</strong> ${jobLevel}</p>
         <p><strong>Work Type:</strong> ${job.remote ? 'Remote' : 'On-site'}</p>
       </div>
       <div class="modal-footer">
-        <a href="${job.apply_url || '#'}" target="_blank" class="button primary-button">Apply Directly</a>
+        <a href="${jobApplyUrl}" target="_blank" class="button primary-button">Apply Directly</a>
       </div>
     `;
 
